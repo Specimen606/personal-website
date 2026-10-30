@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>个人介绍 · 关于我</title>
+
+<!-- 标题字体：联网优先 Playfair Display，离线回退至系统衬线 -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet" />
+
+<style>
+  /* ============================================================
+     设计令牌（Design Tokens）
+     —— 修改配色 / 字号 / 间距，全站统一生效
+     ============================================================ */
+  :root {
+    --paper:      #F4F1EA;   /* 纸感米白背景 */
+    --paper-2:    #FFFFFF;   /* 纯白卡片 */
+    --ink:        #1A1A1A;   /* 近黑主文字 */
+    --ink-soft:   #6B6B6B;   /* 次级灰文字 */
+    --accent:     #D64000;   /* 朱红强调色 */
+    --accent-2:   #2E7D5B;   /* 辅助绿（标签用） */
+    --line:       #E8E4DA;   /* 细分隔线 */
+
+    --serif: "Playfair Display", Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+    --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+
+    --maxw: 1180px;
+    --pad: clamp(20px, 5vw, 72px);
+    --ease: cubic-bezier(.22, 1, .36, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--accent); color: #fff; }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad); }
+
+  /* 区块编号小标签 */
+  .kicker {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: .6em;
+  }
+  .kicker::before {
+    content: "";
+    width: 28px; height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .serif { font-family: var(--serif); }
+
+  /* ============================================================
+     固定导航
+     ============================================================ */
+  header.nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: var(--maxw); margin: 0 auto;
+    padding: 16px var(--pad);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: .02em;
+    display: flex; align-items: baseline; gap: .5em;
+  }
+  .brand small {
+    font-family: var(--sans);
+    font-size: 11px; letter-spacing: .25em; color: var(--ink-soft);
+    text-transform: uppercase; font-weight: 600;
+  }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    position: relative;
+    font-size: 14px; letter-spacing: .12em; text-transform: uppercase;
+    font-weight: 600; color: var(--ink-soft);
+    padding: 4px 0;
+    transition: color .3s var(--ease);
+  }
+  .nav-links a::after {
+    content: ""; position: absolute; left: 0; bottom: -2px;
+    width: 100%; height: 2px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .35s var(--ease);
+  }
+  .nav-links a:hover,
+  .nav-links a.active { color: var(--ink); }
+  .nav-links a.active::after,
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ============================================================
+     视图切换（单文件两页）
+     ============================================================ */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* 顶部留白给固定导航 */
+  .view-pad { padding-top: 92px; }
+
+  /* 通用区块 */
+  .block { padding: clamp(48px, 9vw, 120px) 0; }
+  .block + .block { border-top: 1px solid var(--line); }
+
+  /* ------------------------- 首页 Hero ------------------------- */
+  .hero { padding: clamp(40px, 8vw, 100px) 0 clamp(40px, 7vw, 80px); }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: clamp(24px, 5vw, 64px);
+    align-items: end;
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(56px, 12vw, 150px);
+    line-height: .92;
+    letter-spacing: -.02em;
+  }
+  .hero-name .last { display: block; color: var(--accent); font-style: italic; }
+  .hero-aside { padding-bottom: 8px; }
+  .hero-tag {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(20px, 2.6vw, 30px);
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .hero-sign { color: var(--ink-soft); font-size: 16px; }
+  .hero-rule {
+    margin-top: clamp(32px, 5vw, 56px);
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 14px;
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .scroll-hint { display: inline-flex; align-items: center; gap: 8px; }
+  .scroll-hint .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+    animation: bob 1.6s var(--ease) infinite;
+  }
+  @keyframes bob { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(5px); } }
+
+  /* ------------------------- 简介块 ------------------------- */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: clamp(24px, 5vw, 64px);
+  }
+  .split h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.05;
+    margin-top: 10px;
+  }
+  .prose {
+    font-size: clamp(18px, 2vw, 23px);
+    line-height: 1.75;
+    color: var(--ink);
+    max-width: 60ch;
+  }
+  .prose p + p { margin-top: 1.1em; }
+  .meta-row {
+    margin-top: 28px;
+    display: flex; flex-wrap: wrap; gap: 10px 28px;
+    font-size: 14px; color: var(--ink-soft);
+  }
+  .meta-row b { color: var(--ink); font-weight: 600; }
+
+  /* ------------------------- 爱好网格 ------------------------- */
+  .hobbies {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: clamp(28px, 4vw, 48px);
+  }
+  .hobby {
+    background: var(--paper);
+    padding: clamp(22px, 3vw, 38px);
+    transition: background .35s var(--ease), color .35s var(--ease);
+    position: relative;
+  }
+  .hobby .num {
+    font-family: var(--serif);
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    letter-spacing: .1em;
+  }
+  .hobby h3 {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    margin: 10px 0 8px;
+  }
+  .hobby p { color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+  .hobby:hover { background: var(--ink); color: var(--paper); }
+  .hobby:hover p { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+  .hobby:hover .num { color: var(--accent); }
+
+  /* ------------------------- 作品页 ------------------------- */
+  .works-head {
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: clamp(20px, 4vw, 56px); align-items: end;
+  }
+  .works-title {
+    font-family: var(--serif);
+    font-weight: 900;
+    font-size: clamp(48px, 11vw, 140px);
+    line-height: .9;
+    letter-spacing: -.02em;
+  }
+  .works-title .accent { color: var(--accent); font-style: italic; }
+  .works-count {
+    font-size: 15px; color: var(--ink-soft);
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+  }
+  .works-count b { font-family: var(--serif); font-size: 30px; color: var(--ink); display: block; }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(20px, 3vw, 36px);
+    margin-top: clamp(36px, 5vw, 64px);
+  }
+  .work {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    padding: clamp(26px, 3vw, 40px);
+    display: flex; flex-direction: column;
+    min-height: 280px;
+    transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+    position: relative;
+    overflow: hidden;
+  }
+  .work::before {
+    content: ""; position: absolute; left: 0; top: 0; height: 4px; width: 100%;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform .45s var(--ease);
+  }
+  .work:hover { transform: translateY(-6px); box-shadow: 0 22px 50px -28px rgba(26,26,26,.5); border-color: transparent; }
+  .work:hover::before { transform: scaleX(1); }
+  .work .w-num {
+    font-family: var(--serif);
+    font-size: clamp(48px, 7vw, 86px);
+    font-weight: 900; line-height: 1;
+    color: color-mix(in srgb, var(--ink) 12%, transparent);
+    transition: color .4s var(--ease);
+  }
+  .work:hover .w-num { color: var(--accent); }
+  .work h3 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 700; margin: 14px 0 10px;
+  }
+  .work p.desc { color: var(--ink-soft); font-size: 15px; line-height: 1.6; flex: 1; }
+  .work .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 16px; }
+  .work .tag {
+    font-size: 12px; letter-spacing: .04em;
+    padding: 4px 10px; border: 1px solid var(--line);
+    border-radius: 999px; color: var(--ink-soft);
+  }
+  .work .foot {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--line); padding-top: 14px;
+  }
+  .work .year { font-family: var(--serif); font-style: italic; color: var(--ink-soft); }
+  .work .go {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+    color: var(--ink);
+  }
+  .work .go .arrow { transition: transform .35s var(--ease); }
+  .work:hover .go .arrow { transform: translateX(6px); }
+  .work.disabled .go { color: var(--ink-soft); opacity: .6; }
+  .work.disabled { background: var(--paper); }
+  .work.disabled:hover { transform: none; box-shadow: none; border-color: var(--line); }
+  .work.disabled:hover::before { transform: scaleX(0); }
+  .work.disabled:hover .w-num { color: color-mix(in srgb, var(--ink) 12%, transparent); }
+
+  /* ------------------------- 页脚 ------------------------- */
+  footer.foot {
+    border-top: 1px solid var(--line);
+    padding: 40px 0 56px;
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+  .foot-inner {
+    max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+    font-size: 13px; color: var(--ink-soft); letter-spacing: .04em;
+  }
+  .foot-inner a.to-top {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 600; color: var(--ink);
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 2px;
+  }
+
+  /* ------------------------- 滚动入场 ------------------------- */
+  .reveal {
+    opacity: 0; transform: translateY(26px);
+    transition: opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ------------------------- 响应式 ------------------------- */
+  @media (max-width: 860px) {
+    .hero-grid, .split, .works-head { grid-template-columns: 1fr; }
+    .hero-aside { padding-bottom: 0; }
+    .hobbies { grid-template-columns: 1fr; }
+    .works-grid { grid-template-columns: 1fr; }
+    .nav-links { gap: 20px; }
+    .nav-links a { font-size: 12px; letter-spacing: .08em; }
+    .brand small { display: none; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    .nav-inner { padding: 12px var(--pad); }
+  }
+
+  /* 尊重减少动效偏好 */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none; }
+    .scroll-hint .dot, .work .go .arrow { animation: none; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ===================== 固定导航 ===================== -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" id="brand-mark" href="#home">
+        <span id="brand-name">你的名字</span>
+        <small id="brand-sub">PORTFOLIO</small>
+      </a>
+      <nav class="nav-links">
+        <a href="#home"  data-view="home"  class="active">关于我</a>
+        <a href="#works" data-view="works">我的网站</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== 视图：关于我 ===================== -->
+  <section class="view view-pad active" id="home">
+    <div class="wrap">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-grid">
+          <div>
+            <h1 class="hero-name serif" id="hero-name">你的名字</h1>
+          </div>
+          <div class="hero-aside">
+            <p class="hero-tag" id="hero-tag">一句话身份标签</p>
+            <p class="hero-sign" id="hero-sign">一句话签名 / 座右铭。</p>
+          </div>
+        </div>
+        <div class="hero-rule">
+          <span id="hero-loc">BASED IN · 中国</span>
+          <span class="scroll-hint"><span class="dot"></span> SCROLL</span>
+        </div>
+      </div>
+
+      <!-- 简介 -->
+      <div class="block">
+        <div class="split">
+          <div class="reveal">
+            <span class="kicker">01 / Profile</span>
+            <h2 class="serif">关于我</h2>
+          </div>
+          <div class="reveal">
+            <div class="prose" id="bio"></div>
+            <div class="meta-row" id="bio-meta"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 爱好 -->
+      <div class="block">
+        <div class="split">
+          <div class="reveal">
+            <span class="kicker">02 / Hobbies</span>
+            <h2 class="serif">爱好</h2>
+          </div>
+          <div class="reveal">
+            <div class="hobbies" id="hobbies"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 视图：我的网站 ===================== -->
+  <section class="view view-pad" id="works">
+    <div class="wrap">
+      <div class="block" style="border-top:none; padding-top: clamp(40px,7vw,90px);">
+        <div class="works-head">
+          <div class="reveal">
+            <span class="kicker">Selected Works</span>
+            <h1 class="works-title serif">我的<span class="accent">网站</span></h1>
+          </div>
+          <div class="works-count reveal">
+            <b id="works-total">00</b>
+            个我亲手打造的项目
+          </div>
+        </div>
+
+        <div class="works-grid" id="works-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 页脚 ===================== -->
+  <footer class="foot">
+    <div class="foot-inner">
+      <span id="foot-copy">© 2026 你的名字. 保留所有权利.</span>
+      <a class="to-top" href="#home" id="to-top">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+<script>
+  /* ============================================================
+     ★★★ 个人资料配置区 ★★★
+     —— 只需修改下面这个对象，全站内容随之更新
+     —— 字段均用中文，按说明替换占位示例即可
+     ============================================================ */
+  const PROFILE = {
+    // ↓ 你的姓名（若分「姓 + 名」两行，可把第二行放 lastName）
+    姓名:   "聂玮",
+    英文名: "NIE WEI",
+    // ↓ 身份标签（Hero 右侧斜体那句）
+    身份标签: "工商管理专业 · 在校大学生",
+    // ↓ 一句话签名或座右铭
+    签名:   "在商业理论与真实生活之间，慢慢搭建属于自己的小世界。",
+    // ↓ 所在地
+    所在地: "STATUS · 在校学生",
+
+    // ↓ 个人简介：数组里每一项是一段文字
+    简介: [
+      "你好，我是聂玮，一名工商管理专业的在校大学生。比起只停留在课本上的理论，我更喜欢亲手把想法变成看得见、用得上的东西。",
+      "课余时间我做了自己的网站，也保持着阅读、打游戏和好好休息的习惯——平衡，是我理解的另一种自律。"
+    ],
+    // ↓ 简介下方的小信息（键=标签，值=内容），可自由增减
+    信息: {
+      "专业": "工商管理",
+      "阶段": "在校大学生",
+      "状态": "持续学习中"
+    },
+
+    // ↓ 爱好：每项 { 名称, 说明 }，可增删
+    爱好: [
+      { 名称: "书籍", 说明: "在文字里看别人如何思考世界，是我最安静的充电方式。" },
+      { 名称: "游戏", 说明: "好的游戏像一本能互动的小说，既放松也启发想象。" },
+      { 名称: "睡觉", 说明: "认真休息也是一种能力，睡饱了才有精力去折腾热爱的事。" }
+    ],
+
+    // ↓ 你做过的网站：每项 { 名称, 简介, 标签:[], 年份, 链接 }
+    //   链接留空字符串 "" 时，卡片自动显示为「暂未公开」灰色态，不会出现死链
+    网站: [
+      {
+        名称: "Specimen",
+        简介: "我亲手搭建并托管在 PythonAnywhere 上的个人网站，记录我的项目与想法。",
+        标签: ["PythonAnywhere", "Web", "个人站"],
+        年份: 2026,
+        链接: "https://specimen.pythonanywhere.com"
+      }
+    ]
+  };
+
+  /* ============================================================
+     渲染逻辑（数据 → 视图，统一用 textContent 防注入）
+     ============================================================ */
+  const $ = (s, r = document) => r.querySelector(s);
+
+  function setText(sel, text) { const el = $(sel); if (el) el.textContent = text; }
+
+  function renderProfile() {
+    setText("#brand-name", PROFILE.姓名);
+    setText("#brand-sub", "PORTFOLIO");
+    // Hero 姓名：第一行正体，第二行（姓之后）朱红斜体，营造杂志感
+    const hero = $("#hero-name");
+    hero.textContent = "";
+    const first = document.createElement("span");
+    first.textContent = PROFILE.姓名;
+    const last = document.createElement("span");
+    last.className = "last";
+    last.textContent = PROFILE.英文名;
+    hero.appendChild(first);
+    hero.appendChild(last);
+
+    setText("#hero-tag", PROFILE.身份标签);
+    setText("#hero-sign", PROFILE.签名);
+    setText("#hero-loc", PROFILE.所在地);
+
+    document.title = `${PROFILE.姓名} · 关于我`;
+
+    // 简介
+    const bio = $("#bio");
+    bio.textContent = "";
+    PROFILE.简介.forEach(par => {
+      const p = document.createElement("p");
+      p.textContent = par;
+      bio.appendChild(p);
+    });
+
+    // 小信息
+    const meta = $("#bio-meta");
+    meta.textContent = "";
+    Object.entries(PROFILE.信息).forEach(([k, v]) => {
+      const span = document.createElement("span");
+      span.innerHTML = "";
+      const b = document.createElement("b");
+      b.textContent = k + "：";
+      span.appendChild(b);
+      span.appendChild(document.createTextNode(v));
+      meta.appendChild(span);
+    });
+
+    // 爱好网格
+    const box = $("#hobbies");
+    box.textContent = "";
+    PROFILE.爱好.forEach((h, i) => {
+      const card = document.createElement("div");
+      card.className = "hobby reveal";
+      const num = String(i + 1).padStart(2, "0");
+      const n = document.createElement("div"); n.className = "num"; n.textContent = num;
+      const h3 = document.createElement("h3"); h3.textContent = h.名称;
+      const p = document.createElement("p"); p.textContent = h.说明;
+      card.append(n, h3, p);
+      box.appendChild(card);
+    });
+
+    // 作品页计数
+    setText("#works-total", String(PROFILE.网站.length).padStart(2, "0"));
+
+    // 页脚
+    const year = new Date().getFullYear();
+    setText("#foot-copy", `© ${year} ${PROFILE.姓名}. 保留所有权利.`);
+  }
+
+  function renderWorks() {
+    const grid = $("#works-grid");
+    grid.textContent = "";
+    PROFILE.网站.forEach((w, i) => {
+      const hasLink = !!w.链接;
+      const card = document.createElement("a");
+      card.className = "work reveal" + (hasLink ? "" : " disabled");
+      if (hasLink) { card.href = w.链接; card.target = "_blank"; card.rel = "noopener"; }
+
+      const num = document.createElement("div"); num.className = "w-num"; num.textContent = String(i + 1).padStart(2, "0");
+      const h3 = document.createElement("h3"); h3.textContent = w.名称;
+      const desc = document.createElement("p"); desc.className = "desc"; desc.textContent = w.简介;
+
+      const tags = document.createElement("div"); tags.className = "tags";
+      (w.标签 || []).forEach(t => {
+        const s = document.createElement("span"); s.className = "tag"; s.textContent = t;
+        tags.appendChild(s);
+      });
+
+      const foot = document.createElement("div"); foot.className = "foot";
+      const year = document.createElement("span"); year.className = "year"; year.textContent = w.年份 || "";
+      const go = document.createElement("span"); go.className = "go";
+      go.appendChild(document.createTextNode(hasLink ? "访问网站" : "暂未公开"));
+      const arrow = document.createElement("span"); arrow.className = "arrow"; arrow.textContent = hasLink ? "→" : "·";
+      go.appendChild(arrow);
+      foot.append(year, go);
+
+      card.append(num, h3, desc, tags, foot);
+      grid.appendChild(card);
+    });
+  }
+
+  /* ============================================================
+     视图切换（hash 驱动，支持直接分享 #works）
+     ============================================================ */
+  const views = { home: $("#home"), works: $("#works") };
+  const navLinks = document.querySelectorAll(".nav-links a");
+
+  function switchView(name) {
+    if (!views[name]) name = "home";
+    Object.entries(views).forEach(([k, el]) => el.classList.toggle("active", k === name));
+    navLinks.forEach(a => a.classList.toggle("active", a.dataset.view === name));
+    // 切换视图瞬间回到顶部，避免锚点长滚动
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  function onHash() {
+    const name = (location.hash || "#home").replace("#", "");
+    switchView(name);
+    observeReveal();
+  }
+
+  // 统一通过修改 location.hash 触发 hashchange 来切换视图。
+  // 注意：file:// 协议下 history.replaceState / pushState 会抛 SecurityError，故不使用；
+  // 直接设置 location.hash 在本地双击打开时同样安全，且能可靠触发 hashchange。
+  function goView(name) {
+    if (location.hash.replace("#", "") === name) {
+      switchView(name); // 同名也确保状态一致
+    } else {
+      location.hash = name; // 触发 hashchange → onHash → switchView
+    }
+  }
+
+  navLinks.forEach(a => a.addEventListener("click", e => {
+    e.preventDefault();
+    goView(a.dataset.view);
+  }));
+  $("#brand-mark").addEventListener("click", e => {
+    e.preventDefault();
+    goView("home");
+  });
+  $("#to-top").addEventListener("click", e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  /* ============================================================
+     滚动入场动画（IntersectionObserver，只触发一次）
+     ============================================================ */
+  let observer = null;
+  function observeReveal() {
+    if (observer) observer.disconnect();
+    const items = document.querySelectorAll(".view.active .reveal");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      items.forEach(el => el.classList.add("in"));
+      return;
+    }
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((en, i) => {
+        if (en.isIntersecting) {
+          setTimeout(() => en.target.classList.add("in"), i * 60);
+          observer.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    items.forEach(el => observer.observe(el));
+  }
+
+  /* ============================================================
+     启动
+     ============================================================ */
+  renderProfile();
+  renderWorks();
+  window.addEventListener("hashchange", onHash);
+  onHash();
+</script>
+</body>
+</html>
