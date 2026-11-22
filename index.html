@@ -372,8 +372,9 @@
         <small id="brand-sub">PORTFOLIO</small>
       </a>
       <nav class="nav-links">
-        <a href="#home"  data-view="home"  class="active">关于我</a>
-        <a href="#works" data-view="works">我的网站</a>
+        <a href="#home"     data-view="home"     class="active">关于我</a>
+        <a href="#works"    data-view="works">我的网站</a>
+        <a href="#projects" data-view="projects">合作项目</a>
       </nav>
     </div>
   </header>
@@ -449,6 +450,26 @@
     </div>
   </section>
 
+  <!-- ===================== 视图：合作项目 ===================== -->
+  <section class="view view-pad" id="projects">
+    <div class="wrap">
+      <div class="block" style="border-top:none; padding-top: clamp(40px,7vw,90px);">
+        <div class="works-head">
+          <div class="reveal">
+            <span class="kicker">Collaboration</span>
+            <h1 class="works-title serif">合作<span class="accent">项目</span></h1>
+          </div>
+          <div class="works-count reveal">
+            <b id="projects-total">00</b>
+            个与他人共同完成的项目
+          </div>
+        </div>
+
+        <div class="works-grid" id="projects-grid"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== 页脚 ===================== -->
   <footer class="foot">
     <div class="foot-inner">
@@ -509,7 +530,11 @@
         标签: ["GitHub Pages", "分析报告", "Web"],
         年份: 2026,
         链接: "https://specimen606.github.io/chat-record-analysis/"
-      },
+      }
+    ],
+
+    // ↓ 合作项目：单独一栏展示，格式同「网站」
+    合作项目: [
       {
         名称: "合作项目",
         简介: "与他人协作完成的网页项目，展示团队共同的想法与成果。",
@@ -583,18 +608,20 @@
       box.appendChild(card);
     });
 
-    // 作品页计数
+    // 作品 / 合作项目计数
     setText("#works-total", String(PROFILE.网站.length).padStart(2, "0"));
+    setText("#projects-total", String(PROFILE.合作项目.length).padStart(2, "0"));
 
     // 页脚
     const year = new Date().getFullYear();
     setText("#foot-copy", `© ${year} ${PROFILE.姓名}. 保留所有权利.`);
   }
 
-  function renderWorks() {
-    const grid = $("#works-grid");
+  function renderWorkGrid(gridId, list) {
+    const grid = $(gridId);
+    if (!grid) return;
     grid.textContent = "";
-    PROFILE.网站.forEach((w, i) => {
+    list.forEach((w, i) => {
       const hasLink = !!w.链接;
       const card = document.createElement("a");
       card.className = "work reveal" + (hasLink ? "" : " disabled");
@@ -623,10 +650,13 @@
     });
   }
 
+  function renderWorks() { renderWorkGrid("#works-grid", PROFILE.网站); }
+  function renderProjects() { renderWorkGrid("#projects-grid", PROFILE.合作项目); }
+
   /* ============================================================
      视图切换（hash 驱动，支持直接分享 #works）
      ============================================================ */
-  const views = { home: $("#home"), works: $("#works") };
+  const views = { home: $("#home"), works: $("#works"), projects: $("#projects") };
   const navLinks = document.querySelectorAll(".nav-links a");
 
   function switchView(name) {
@@ -694,6 +724,7 @@
      ============================================================ */
   renderProfile();
   renderWorks();
+  renderProjects();
   window.addEventListener("hashchange", onHash);
   onHash();
 </script>
