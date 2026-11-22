@@ -231,6 +231,39 @@
   .hobby:hover p { color: color-mix(in srgb, var(--paper) 70%, transparent); }
   .hobby:hover .num { color: var(--accent); }
 
+  /* ------------------------- 经历时间线 ------------------------- */
+  .timeline { border-top: 1px solid var(--line); }
+  .tl-item {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: clamp(14px, 3vw, 32px);
+    padding: clamp(20px, 2.5vw, 30px) 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .tl-num {
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 900; line-height: 1;
+    color: var(--accent);
+    transition: color .35s var(--ease);
+  }
+  .tl-item:hover .tl-num { color: var(--ink); }
+  .tl-head {
+    display: flex; align-items: baseline; flex-wrap: wrap;
+    gap: 12px; margin-bottom: 8px;
+  }
+  .tl-title {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2.4vw, 28px);
+    font-weight: 700;
+  }
+  .tl-year {
+    font-size: 12px; letter-spacing: .18em;
+    color: var(--ink-soft); text-transform: uppercase;
+  }
+  .tl-item p { color: var(--ink-soft); font-size: 15px; line-height: 1.7; }
+
   /* ------------------------- 作品页 ------------------------- */
   .works-head {
     display: grid; grid-template-columns: 1.4fr 1fr;
@@ -343,6 +376,7 @@
     .hero-grid, .split, .works-head { grid-template-columns: 1fr; }
     .hero-aside { padding-bottom: 0; }
     .hobbies { grid-template-columns: 1fr; }
+    .tl-item { grid-template-columns: 1fr; gap: 6px; }
     .works-grid { grid-template-columns: 1fr; }
     .nav-links { gap: 20px; }
     .nav-links a { font-size: 12px; letter-spacing: .08em; }
@@ -423,6 +457,19 @@
           </div>
           <div class="reveal">
             <div class="hobbies" id="hobbies"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 经历 -->
+      <div class="block">
+        <div class="split">
+          <div class="reveal">
+            <span class="kicker">03 / Experience</span>
+            <h2 class="serif">经历</h2>
+          </div>
+          <div class="reveal">
+            <div class="timeline" id="timeline"></div>
           </div>
         </div>
       </div>
@@ -512,6 +559,13 @@
       { 名称: "书籍", 说明: "在文字里看别人如何思考世界，是我最安静的充电方式。" },
       { 名称: "游戏", 说明: "好的游戏像一本能互动的小说，既放松也启发想象。" },
       { 名称: "睡觉", 说明: "认真休息也是一种能力，睡饱了才有精力去折腾热爱的事。" }
+    ],
+
+    // ↓ 经历：简单描述逐个项目的创建历程，每项 { 编号, 标题, 年份, 说明 }
+    经历: [
+      { 编号: "01", 标题: "第一个个人网站", 年份: 2026, 说明: "从零开始搭建 Specimen，把它托管到 PythonAnywhere。第一次让一个真正能访问的页面上线，也第一次体会到从想法到落地的完整过程。" },
+      { 编号: "02", 标题: "聊天分析报告", 年份: 2026, 说明: "尝试把聊天记录整理成可视化报告，用 GitHub Pages 发布了站点。开始更在意信息如何被清晰地呈现，而不只是代码能不能跑。" },
+      { 编号: "03", 标题: "合作项目", 年份: 2026, 说明: "和伙伴一起完成网页项目，学习分工、沟通与合并彼此的想法。发现好的作品往往来自协作，而不是一个人的灵光一现。" }
     ],
 
     // ↓ 你做过的网站：每项 { 名称, 简介, 标签:[], 年份, 链接 }
@@ -611,6 +665,25 @@
     // 作品 / 合作项目计数
     setText("#works-total", String(PROFILE.网站.length).padStart(2, "0"));
     setText("#projects-total", String(PROFILE.合作项目.length).padStart(2, "0"));
+
+    // 经历时间线
+    const tl = $("#timeline");
+    if (tl) {
+      tl.textContent = "";
+      PROFILE.经历.forEach(it => {
+        const row = document.createElement("div"); row.className = "tl-item";
+        const num = document.createElement("div"); num.className = "tl-num"; num.textContent = it.编号;
+        const body = document.createElement("div");
+        const head = document.createElement("div"); head.className = "tl-head";
+        const title = document.createElement("span"); title.className = "tl-title"; title.textContent = it.标题;
+        const year = document.createElement("span"); year.className = "tl-year"; year.textContent = it.年份;
+        head.append(title, year);
+        const p = document.createElement("p"); p.textContent = it.说明;
+        body.append(head, p);
+        row.append(num, body);
+        tl.appendChild(row);
+      });
+    }
 
     // 页脚
     const year = new Date().getFullYear();
