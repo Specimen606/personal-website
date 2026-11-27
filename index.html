@@ -264,6 +264,50 @@
   }
   .tl-item p { color: var(--ink-soft); font-size: 15px; line-height: 1.7; }
 
+  /* ------------------------- 项目进程详情 ------------------------- */
+  .process-detail { border-top: 1px solid var(--line); }
+  .pd-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+  }
+  .pd-date {
+    font-family: var(--serif); font-size: clamp(24px, 3vw, 36px);
+    font-weight: 900; color: var(--accent); line-height: 1;
+  }
+  .pd-stage { color: var(--ink); font-weight: 600; font-size: 15px; }
+  .pd-lead { padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .pd-title {
+    font-family: var(--serif); font-size: clamp(19px, 2.2vw, 26px);
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .pd-lead p { color: var(--ink-soft); font-size: 15px; line-height: 1.7; }
+  .pd-flow {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+  }
+  .pd-step {
+    border: 1px solid var(--line); padding: 6px 12px;
+    font-size: 13px; background: var(--paper-2);
+  }
+  .pd-arrow { color: var(--accent); font-weight: 700; }
+  .pd-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+  }
+  .pd-cell { background: var(--paper); padding: 18px 20px; }
+  .pd-cell h4 {
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px; font-weight: 600;
+  }
+  .pd-row { display: flex; gap: 12px; padding: 4px 0; font-size: 14px; }
+  .pd-row b { font-family: var(--serif); color: var(--ink); min-width: 40px; }
+  .pd-row span { color: var(--ink-soft); }
+  .pd-pain {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline;
+    padding: 16px 0; color: var(--ink-soft); font-size: 15px; line-height: 1.7;
+  }
+  .pd-pain b { color: var(--accent); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+
   /* ------------------------- 作品页 ------------------------- */
   .works-head {
     display: grid; grid-template-columns: 1.4fr 1fr;
@@ -377,6 +421,7 @@
     .hero-aside { padding-bottom: 0; }
     .hobbies { grid-template-columns: 1fr; }
     .tl-item { grid-template-columns: 1fr; gap: 6px; }
+    .pd-grid { grid-template-columns: 1fr; }
     .works-grid { grid-template-columns: 1fr; }
     .nav-links { gap: 20px; }
     .nav-links a { font-size: 12px; letter-spacing: .08em; }
@@ -513,6 +558,19 @@
         </div>
 
         <div class="works-grid" id="projects-grid"></div>
+
+        <!-- 02 项目进程详情 -->
+        <div class="block reveal" style="padding-bottom:0;">
+          <div class="split">
+            <div class="reveal">
+              <span class="kicker">02 / Process</span>
+              <h2 class="serif">项目进程</h2>
+            </div>
+            <div class="reveal">
+              <div class="process-detail" id="process-detail"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -595,8 +653,37 @@
         标签: ["GitHub Pages", "协作", "Web"],
         年份: 2026,
         链接: "https://specimen606.github.io/tdxmgrwz/"
+      },
+      {
+        名称: "项目进程",
+        简介: "AI 宿舍低成本食谱搭配机：11 月 19 日初步尝试，软件雏形已大致确定，正在把「今天吃什么」变成可落地的食谱卡。",
+        标签: ["AI", "ESP32", "校园项目"],
+        年份: 2026,
+        链接: ""
       }
-    ]
+    ],
+
+    // ↓ 合作项目「项目进程」详情（对应 02 卡片）
+    进程详情: {
+      日期: "11月19日",
+      阶段: "初步尝试 · 软件雏形已大致确定",
+      项目名: "AI宿舍低成本食谱搭配机",
+      简介: "面向大学生宿舍场景，用 AI 把「今天吃什么」直接变成一周食谱卡。支持食堂窗口选择与小电锅简易快手做法，低成本、好落地。",
+      核心逻辑: [
+        { 类型: "7号", 偏好: "喜欢花样多、换口味" },
+        { 类型: "6号", 偏好: "在意养胃、清淡健康" },
+        { 类型: "1号", 偏好: "讲究营养均衡" }
+      ],
+      流程: [
+        "输入预算 / 有无小电锅 / 忌口",
+        "AI 生成一周食谱",
+        "搭配食堂窗口 + 快手做法",
+        "打印成食谱卡"
+      ],
+      硬件: "ESP32 + 热敏打印机，成本 39 元",
+      定价: "7.9 元 / 份（一周食谱）",
+      痛点: "每天纠结「今天吃什么」，很多大学生都有这个困扰；让食谱直接落地，而不只是停留在建议层面。"
+    }
   };
 
   /* ============================================================
@@ -726,6 +813,59 @@
   function renderWorks() { renderWorkGrid("#works-grid", PROFILE.网站); }
   function renderProjects() { renderWorkGrid("#projects-grid", PROFILE.合作项目); }
 
+  function renderProcess() {
+    const box = $("#process-detail");
+    if (!box || !PROFILE.进程详情) return;
+    const d = PROFILE.进程详情;
+    box.textContent = "";
+
+    const head = document.createElement("div"); head.className = "pd-head";
+    const date = document.createElement("span"); date.className = "pd-date"; date.textContent = d.日期;
+    const stage = document.createElement("span"); stage.className = "pd-stage"; stage.textContent = d.阶段;
+    head.append(date, stage);
+
+    const lead = document.createElement("div"); lead.className = "pd-lead";
+    const title = document.createElement("div"); title.className = "pd-title"; title.textContent = d.项目名;
+    const intro = document.createElement("p"); intro.textContent = d.简介;
+    lead.append(title, intro);
+
+    const flow = document.createElement("div"); flow.className = "pd-flow";
+    d.流程.forEach((s, i) => {
+      if (i > 0) {
+        const arrow = document.createElement("span"); arrow.className = "pd-arrow"; arrow.textContent = "→";
+        flow.appendChild(arrow);
+      }
+      const step = document.createElement("span"); step.className = "pd-step"; step.textContent = s;
+      flow.appendChild(step);
+    });
+
+    const grid = document.createElement("div"); grid.className = "pd-grid";
+    const c1 = document.createElement("div"); c1.className = "pd-cell";
+    const h1 = document.createElement("h4"); h1.textContent = "核心逻辑 · 九型偏好"; c1.appendChild(h1);
+    d.核心逻辑.forEach(it => {
+      const row = document.createElement("div"); row.className = "pd-row";
+      const b = document.createElement("b"); b.textContent = it.类型;
+      const s = document.createElement("span"); s.textContent = it.偏好;
+      row.append(b, s); c1.appendChild(row);
+    });
+    const c2 = document.createElement("div"); c2.className = "pd-cell";
+    const h2 = document.createElement("h4"); h2.textContent = "落地信息"; c2.appendChild(h2);
+    [["硬件", d.硬件], ["定价", d.定价]].forEach(([k, v]) => {
+      const row = document.createElement("div"); row.className = "pd-row";
+      const b = document.createElement("b"); b.textContent = k;
+      const s = document.createElement("span"); s.textContent = v;
+      row.append(b, s); c2.appendChild(row);
+    });
+    grid.append(c1, c2);
+
+    const pain = document.createElement("div"); pain.className = "pd-pain";
+    const painLabel = document.createElement("b"); painLabel.textContent = "痛点";
+    const painText = document.createElement("span"); painText.textContent = d.痛点;
+    pain.append(painLabel, painText);
+
+    box.append(head, lead, flow, grid, pain);
+  }
+
   /* ============================================================
      视图切换（hash 驱动，支持直接分享 #works）
      ============================================================ */
@@ -798,6 +938,7 @@
   renderProfile();
   renderWorks();
   renderProjects();
+  renderProcess();
   window.addEventListener("hashchange", onHash);
   onHash();
 </script>
