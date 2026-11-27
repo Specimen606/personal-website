@@ -307,6 +307,16 @@
     padding: 16px 0; color: var(--ink-soft); font-size: 15px; line-height: 1.7;
   }
   .pd-pain b { color: var(--accent); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .pd-node + .pd-node {
+    margin-top: 10px;
+    border-top: 2px solid var(--accent);
+    padding-top: 2px;
+  }
+  .pd-bullet {
+    display: flex; gap: 10px; padding: 5px 0;
+    color: var(--ink-soft); font-size: 14px; line-height: 1.6;
+  }
+  .pd-bullet::before { content: "—"; color: var(--accent); font-weight: 700; }
 
   /* ------------------------- 作品页 ------------------------- */
   .works-head {
@@ -664,26 +674,40 @@
     ],
 
     // ↓ 合作项目「项目进程」详情（对应 02 卡片）
-    进程详情: {
-      日期: "11月19日",
-      阶段: "初步尝试 · 软件雏形已大致确定",
-      项目名: "AI宿舍低成本食谱搭配机",
-      简介: "面向大学生宿舍场景，用 AI 把「今天吃什么」直接变成一周食谱卡。支持食堂窗口选择与小电锅简易快手做法，低成本、好落地。",
-      核心逻辑: [
-        { 类型: "7号", 偏好: "喜欢花样多、换口味" },
-        { 类型: "6号", 偏好: "在意养胃、清淡健康" },
-        { 类型: "1号", 偏好: "讲究营养均衡" }
-      ],
-      流程: [
-        "输入预算 / 有无小电锅 / 忌口",
-        "AI 生成一周食谱",
-        "搭配食堂窗口 + 快手做法",
-        "打印成食谱卡"
-      ],
-      硬件: "ESP32 + 热敏打印机，成本 39 元",
-      定价: "7.9 元 / 份（一周食谱）",
-      痛点: "每天纠结「今天吃什么」，很多大学生都有这个困扰；让食谱直接落地，而不只是停留在建议层面。"
-    }
+    进程详情: [
+      {
+        日期: "11月19日",
+        阶段: "初步尝试 · 软件雏形已大致确定",
+        项目名: "AI宿舍低成本食谱搭配机",
+        简介: "面向大学生宿舍场景，用 AI 把「今天吃什么」直接变成一周食谱卡。支持食堂窗口选择与小电锅简易快手做法，低成本、好落地。",
+        核心逻辑: [
+          { 类型: "7号", 偏好: "喜欢花样多、换口味" },
+          { 类型: "6号", 偏好: "在意养胃、清淡健康" },
+          { 类型: "1号", 偏好: "讲究营养均衡" }
+        ],
+        流程: [
+          "输入预算 / 有无小电锅 / 忌口",
+          "AI 生成一周食谱",
+          "搭配食堂窗口 + 快手做法",
+          "打印成食谱卡"
+        ],
+        硬件: "ESP32 + 热敏打印机，成本 39 元",
+        定价: "7.9 元 / 份（一周食谱）",
+        痛点: "每天纠结「今天吃什么」，很多大学生都有这个困扰；让食谱直接落地，而不只是停留在建议层面。"
+      },
+      {
+        日期: "11月26日",
+        阶段: "持续迭代 · 赚到第一笔金",
+        项目名: "软件完善与新体验",
+        简介: "在雏形基础上完善了项目软件，加入了新套餐，并优化了盲盒体验。产品从能用变得更好用，也收获了第一笔真实的收入。",
+        亮点: [
+          "完善项目软件，整体体验更顺畅",
+          "加入新套餐，覆盖更多饮食场景",
+          "完善盲盒体验，增加探索乐趣",
+          "赚到了第一笔金"
+        ]
+      }
+    ]
   };
 
   /* ============================================================
@@ -815,55 +839,80 @@
 
   function renderProcess() {
     const box = $("#process-detail");
-    if (!box || !PROFILE.进程详情) return;
-    const d = PROFILE.进程详情;
+    if (!box || !Array.isArray(PROFILE.进程详情)) return;
     box.textContent = "";
 
-    const head = document.createElement("div"); head.className = "pd-head";
-    const date = document.createElement("span"); date.className = "pd-date"; date.textContent = d.日期;
-    const stage = document.createElement("span"); stage.className = "pd-stage"; stage.textContent = d.阶段;
-    head.append(date, stage);
+    PROFILE.进程详情.forEach(d => {
+      const node = document.createElement("div"); node.className = "pd-node";
 
-    const lead = document.createElement("div"); lead.className = "pd-lead";
-    const title = document.createElement("div"); title.className = "pd-title"; title.textContent = d.项目名;
-    const intro = document.createElement("p"); intro.textContent = d.简介;
-    lead.append(title, intro);
+      const head = document.createElement("div"); head.className = "pd-head";
+      const date = document.createElement("span"); date.className = "pd-date"; date.textContent = d.日期;
+      const stage = document.createElement("span"); stage.className = "pd-stage"; stage.textContent = d.阶段;
+      head.append(date, stage);
 
-    const flow = document.createElement("div"); flow.className = "pd-flow";
-    d.流程.forEach((s, i) => {
-      if (i > 0) {
-        const arrow = document.createElement("span"); arrow.className = "pd-arrow"; arrow.textContent = "→";
-        flow.appendChild(arrow);
+      const lead = document.createElement("div"); lead.className = "pd-lead";
+      const title = document.createElement("div"); title.className = "pd-title"; title.textContent = d.项目名;
+      const intro = document.createElement("p"); intro.textContent = d.简介;
+      lead.append(title, intro);
+      node.append(head, lead);
+
+      if (d.流程 && d.流程.length) {
+        const flow = document.createElement("div"); flow.className = "pd-flow";
+        d.流程.forEach((s, i) => {
+          if (i > 0) {
+            const arrow = document.createElement("span"); arrow.className = "pd-arrow"; arrow.textContent = "→";
+            flow.appendChild(arrow);
+          }
+          const step = document.createElement("span"); step.className = "pd-step"; step.textContent = s;
+          flow.appendChild(step);
+        });
+        node.appendChild(flow);
       }
-      const step = document.createElement("span"); step.className = "pd-step"; step.textContent = s;
-      flow.appendChild(step);
-    });
 
-    const grid = document.createElement("div"); grid.className = "pd-grid";
-    const c1 = document.createElement("div"); c1.className = "pd-cell";
-    const h1 = document.createElement("h4"); h1.textContent = "核心逻辑 · 九型偏好"; c1.appendChild(h1);
-    d.核心逻辑.forEach(it => {
-      const row = document.createElement("div"); row.className = "pd-row";
-      const b = document.createElement("b"); b.textContent = it.类型;
-      const s = document.createElement("span"); s.textContent = it.偏好;
-      row.append(b, s); c1.appendChild(row);
-    });
-    const c2 = document.createElement("div"); c2.className = "pd-cell";
-    const h2 = document.createElement("h4"); h2.textContent = "落地信息"; c2.appendChild(h2);
-    [["硬件", d.硬件], ["定价", d.定价]].forEach(([k, v]) => {
-      const row = document.createElement("div"); row.className = "pd-row";
-      const b = document.createElement("b"); b.textContent = k;
-      const s = document.createElement("span"); s.textContent = v;
-      row.append(b, s); c2.appendChild(row);
-    });
-    grid.append(c1, c2);
+      if (d.核心逻辑 && d.核心逻辑.length) {
+        const grid = document.createElement("div"); grid.className = "pd-grid";
+        const c1 = document.createElement("div"); c1.className = "pd-cell";
+        const h1 = document.createElement("h4"); h1.textContent = "核心逻辑 · 九型偏好"; c1.appendChild(h1);
+        d.核心逻辑.forEach(it => {
+          const row = document.createElement("div"); row.className = "pd-row";
+          const b = document.createElement("b"); b.textContent = it.类型;
+          const s = document.createElement("span"); s.textContent = it.偏好;
+          row.append(b, s); c1.appendChild(row);
+        });
+        const c2 = document.createElement("div"); c2.className = "pd-cell";
+        const h2 = document.createElement("h4"); h2.textContent = "落地信息"; c2.appendChild(h2);
+        [["硬件", d.硬件], ["定价", d.定价]].forEach(([k, v]) => {
+          const row = document.createElement("div"); row.className = "pd-row";
+          const b = document.createElement("b"); b.textContent = k;
+          const s = document.createElement("span"); s.textContent = v;
+          row.append(b, s); c2.appendChild(row);
+        });
+        grid.append(c1, c2);
+        node.appendChild(grid);
+      }
 
-    const pain = document.createElement("div"); pain.className = "pd-pain";
-    const painLabel = document.createElement("b"); painLabel.textContent = "痛点";
-    const painText = document.createElement("span"); painText.textContent = d.痛点;
-    pain.append(painLabel, painText);
+      if (d.亮点 && d.亮点.length) {
+        const grid = document.createElement("div"); grid.className = "pd-grid";
+        const cell = document.createElement("div"); cell.className = "pd-cell";
+        const h = document.createElement("h4"); h.textContent = "本次进展"; cell.appendChild(h);
+        d.亮点.forEach(t => {
+          const row = document.createElement("div"); row.className = "pd-bullet"; row.textContent = t;
+          cell.appendChild(row);
+        });
+        grid.appendChild(cell);
+        node.appendChild(grid);
+      }
 
-    box.append(head, lead, flow, grid, pain);
+      if (d.痛点) {
+        const pain = document.createElement("div"); pain.className = "pd-pain";
+        const painLabel = document.createElement("b"); painLabel.textContent = "痛点";
+        const painText = document.createElement("span"); painText.textContent = d.痛点;
+        pain.append(painLabel, painText);
+        node.appendChild(pain);
+      }
+
+      box.appendChild(node);
+    });
   }
 
   /* ============================================================
